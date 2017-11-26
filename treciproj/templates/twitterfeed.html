@@ -1,0 +1,9 @@
+<html>
+    <p> KEK </p>
+    {% for tweet in tweets %}
+       <h1>{{ tweet.user.name }} : </h1> <h2> {{ tweet.text}} </h2>
+       <button><a href='retweet/?id={{ tweet.id }}'>Retweet</a></button> 
+        
+       <br>
+    {% endfor %}
+</html>

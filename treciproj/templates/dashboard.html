@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block style %}
+
+<br>
+<br>
+<h1> {{ username }} </h1>
+
+{% for event in eventic %}
+  <h2> {{ event.name }}, {{ event.url }}
+  {% endfor %}
+
+{% endblock %}
+        <a style="color: #95989A" href="/logout">Logout</a>

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+    {% block title %}all. Social Networks made easy.{% endblock %}
+
+    {% block style %}
+    <style>
+
+        .left {
+            height: 100%;
+            width: 50%;
+            background-image: linear-gradient(-60deg, #5641db 0%, #1f86ef 100%);
+            float: left;
+        }
+        .right {
+            height: 100%;
+            width: 50%;
+            float: right;
+        }
+        .right-content, .left-content {
+            margin: 90px;
+        }
+        .right-logo {
+            font-weight: 600;
+            font-size: 80;
+            color: #95989A;
+        }
+        .right-sublogo {
+            color: #95989A;
+        }
+        .signInLink {
+            color: #2085EF;
+        }
+        .signInLink:hover {
+            text-decoration: none;
+        }
+        .left-text {
+            color: white;
+            font-weight: 600;
+            font-size: 80;
+            line-height: 100%;
+            margin-top: 300px;
+        }
+    </style>
+    {% endblock %}
+
+    {% block app %}
+    <div class="left">
+        <div class="left-content">
+            <h1 class="left-text">Social networks reinvented.</h1>
+        </div>
+    </div>
+    <div class="right">
+        <div class="right-content">
+            <h1 class="right-logo">all.</h1>
+            <h3 class="right-sublogo">Sign up today. Start connecting.</h3>
+            <h5 class="right-sublogo">You already have account? <a href="/login" class="signInLink">Sign in.</a></h5>
+            <h2>Sign up</h2>
+    <form method="post">
+        {% if error %}
+
+            {% if form.errors %}
+            <div class="alert alert-error">
+                <h4>Please fix the following errors</h4>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <li><a href="#id_{{ field.name }}" class="uk-form-danger"><strong>{{ error|escape }}</strong></a></li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if form.non_field_errors %}
+                    {{ form.non_field_errors }}
+                {% endif %}
+            </div>
+            {% endif %}
+
+        {%endif%}
+
+        {% csrf_token %}
+      {% for field in form %}
+        <p>
+          {{ field.label_tag }} <br>
+          {{ field }}
+          {% if field.help_text %}
+            <small style="color: grey">{{ field.help_text }}</small>
+          {% endif %}
+        </p>
+      {% endfor %}
+      <button class="uk-button uk-button-default" style="width: 100%; margin: 20px 0px; border-radius: 10px; background-image: linear-gradient(-60deg, #5641db 0%, #1f86ef 100%); color: white; ">Sign Up</button>
+    </form>
+        </div>
+    </div>
+    {% endblock %}

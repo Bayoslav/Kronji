@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block style %}<style>
+#outPopUp {
+  position: absolute;
+  width: 700px;
+  height: 200px;
+  z-index: 15;
+  top: 50%;
+  left: 50%;
+  margin: -300px 0 0 -350px;
+}
+</style>{% endblock %}
+
+{% block app %}
+
+<div id="outPopUp">
+    <h1 style="font-weight: 600; font-size: 80; color: #95989A; margin-bottom: 50px;">all.</h1>
+    <form method="post">
+
+        {% if error %}
+            <p class="uk-form-danger"><strong> {{ error }} </strong></p>
+        {% endif %}
+
+      {% csrf_token %}
+      {% for field in form %}
+        <p>
+          {{ field.label_tag }}<br>
+          {{ field }}
+          {% if field.help_text %}
+            <small style="color: grey">{{ field.help_text }}</small>
+          {% endif %}
+        </p>
+        {% endfor %}
+        <button class="uk-button uk-button-default" style="width: 100%; margin: 20px 0px; border-radius: 10px; background-image: linear-gradient(-60deg, #5641db 0%, #1f86ef 100%); color: white; ">Sign In</button>
+    </form>
+    <div class="linkBelowForm">
+        <h5 class="right-sublogo">You don't have an account? <a href="/">Sign up.</a></h5>
+        <h5 class="right-sublogo">Forgot password? <a href="/password_reset">Reset now.</a></h5>
+    </div>
+</div>
+
+{% endblock %}
