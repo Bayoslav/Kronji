@@ -91,11 +91,13 @@ def get_horses(racelist):
                 print("itsthis")
                 horseurl = 'http://www.equineline.com/Free5XPedigreeSearchResults.cfm?horse_name=' + horsename + '&page_state=LIST_HITS&foaling_year=&dam_name=&include_sire_line=Y'
                 print(horseurl)
-                try:
-                    horsereq = requests.get(horseurl,headers=headers)
-                except:
-                    time.sleep(6)
-                    horsereq = requests.get(horseurl,headers=headers)
+                while(1):
+                    try:
+                        horsereq = requests.get(horseurl,headers=headers)
+                    except:
+                        continue 
+                    else:
+                        break
                 soup = bs.BeautifulSoup(horsereq.text, 'lxml')
                 h4 = soup.find('h4')
                 if(str(h4)=='<h4><strong>No Matches Found</strong></h4>'):
@@ -106,29 +108,20 @@ def get_horses(racelist):
                     try:
                         horsrl = soup.find('a').get('href')
                     except:
-                        print("Captcha error")
-                        time.sleep(6)
-                        time.sleep(6)
-                        horsereq = requests.get(horseurl,headers=headers)
-                        soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
-                    try:
-                        horsrl = soup.find('a').get('href')
-                    except:
-                        print("-- MENJAJ --")
-                        time.sleep(12)
-                        horsereq = requests.get(horseurl,headers=headers)
-                        soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
-                        try:
-                            horsrl = soup.find('a').get('href')
-                            url = 'http://www.equineline.com/' + horsrl
-                        except:
-                            print("-- MENJAJ --")
-                            time.sleep(12)
-                            horsereq = requests.get(horseurl,headers=headers)
-                            soup = bs.BeautifulSoup(horsereq.text, 'lxml')
-                            horsrl = soup.find('a').get('href')
+                        time.sleep(3)
+                        while(1):
+                            try:
+                                print("Captcha error")
+                                
+                                time.sleep(3)
+                                horsereq = requests.get(horseurl,headers=headers)
+                                soup = bs.BeautifulSoup(horsereq.text, 'lxml')
+                                horsrl = soup.find('a').get('href') 
+                            except:
+                                continue 
+                            else:
+                                break
                     url = 'http://www.equineline.com/' + horsrl
-                    
                     start = url.find('reference_number=')
                     print("URL:", url)
                     end = url.find('&registry')
@@ -138,29 +131,31 @@ def get_horses(racelist):
                     print(link)
                     #print(url)
                     #print(link)
-                    try:
-                        maker = requests.get(link,headers=headers)
-                    except:
-                        time.sleep(6)
-                        maker = requests.get(link,headers=headers)
-                    supica = bs.BeautifulSoup(maker.text,'lxml')
-                    #print(supica)
-                    table = supica.find('table')
+                    while(1):
+                        try:
+                            maker = requests.get(link,headers=headers)
+                        except:
+                            time.sleep(3)
+                            continue
+                        else:
+                            supica = bs.BeautifulSoup(maker.text,'lxml')
+                        #print(supica)
+                            table = supica.find('table')
+                            break
                     #print(table)
                     #print(type(table))
-                    if(table is None):
-                        time.sleep(6)
-                        maker = requests.get(link,headers=headers)
-                        supica = bs.BeautifulSoup(maker.text,'lxml')
-                        table = supica.find('table')
+                    while(1):
                         if(table is None):
-                            time.sleep(6)
-                            maker = requests.get(link,headers=headers)
-                                
+                            time.sleep(3)
+                            try:
+                                maker = requests.get(link,headers=headers)
+                            else:
+                                time.sleep(10)
+                                maker = requests.get(link,headers=headers)
                             supica = bs.BeautifulSoup(maker.text,'lxml')
-                        
-                    table = supica.find('table')
-                    
+                            table = supica.find('table')
+                        else:
+                            break
                     inftab = get_table(table)
                     print(inftab)
                 ud = str(uuid.uuid4())

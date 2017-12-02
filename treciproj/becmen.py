@@ -6,6 +6,8 @@ django.setup()
 from RaceApp.models import Country
 import requests
 o = Country.objects.get(id=1)
-jsonero = json.loads(o.dicts)
-#print(jsonero)
-r = requests.post('metiovdeurl',json=jsonero)
+
+f = open('noclaim.json','w')
+f.write(o.dicts)
+f.close()
+#r = requests.post('metiovdeurl',json=jsonero)

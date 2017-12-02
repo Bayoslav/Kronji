@@ -27,8 +27,10 @@ def get_proxy():
 def get_table(table):
     #soup = bs.BeautifulSoup(table,'lxml')
     i=0
+    print("Table TEST")
     dictlist = []
     for tr in table.find_all('tr'):
+            
             i+=1
             tds = tr.find_all('td')
             if(i==1):
@@ -101,17 +103,18 @@ def get_horses(racelist):
                 horseurl = 'http://www.equineline.com/Free5XPedigreeSearchResults.cfm?horse_name=' + horsename + '&page_state=LIST_HITS&foaling_year=&dam_name=&include_sire_line=Y'
                 print(horseurl)
                 print('kauboj')
-                try:
-                    ###proxies = get_proxy()
-                    horsereq = requests.get(horseurl,headers=headers,timeout=9)
-                except:
-                    print('error')
-                    time.sleep(12)
-                    horsereq = requests.get(horseurl,headers=headers,timeout=9)
-                    continue
-                else:
-                    print("mek")
-                    break              
+                while(1):
+                    try:
+                        ###proxies = get_proxy()
+                        horsereq = requests.get(horseurl,headers=headers,timeout=9)
+                    except:
+                        print('error')
+                        time.sleep(12)
+                        horsereq = requests.get(horseurl,headers=headers,timeout=9)
+                        continue
+                    else:
+                        print("mek")
+                        break              
                 soup = bs.BeautifulSoup(horsereq.text, 'lxml')
                 h4 = soup.find('h4')
                 print(h4)
@@ -182,6 +185,7 @@ def get_horses(racelist):
                                     continue
                                 else:
                                     break
+                            break
 
                             supica = bs.BeautifulSoup(maker.text,'lxml')
                             table = supica.find('table')
@@ -217,6 +221,7 @@ def get_horses(racelist):
                     }
                 horselist.append(horsedict)
         race['Horses'] = horselist
+        print("list: ", horselist)
     return racelist
 
 
