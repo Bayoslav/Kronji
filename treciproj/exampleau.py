@@ -26,12 +26,12 @@ def get_table(table):
             'sire' : sire,
             'name' : tds[0].text,
             'foals' : tds[2].text,
-            'starters' : tds[3].text,
-            'winners' :  tds[4].text,
-            'BW (%)' : tds[5].text,
+            'starters' : tds[3].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'winners' :  tds[4].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'BW (%)' : tds[5].text.replace(" ", "").replace("(", ",").replace(")",""),
             'earnings' : tds[6].text,
             'ael' : tds[7].text,
-            }
+                }
             # print(dict)
                 dictlist.append(dict)
             if(i==5):
@@ -42,12 +42,12 @@ def get_table(table):
             'name' : tds[0].text,
             'mares' : tds[1].text,
             'foals' : tds[2].text,
-            'starters' : tds[3].text,
-            'winners' :  tds[4].text,
-            'BW (%)' : tds[5].text,
-            'earnings' : tds[6].text,
+            'starters' : tds[3].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'winners' :  tds[4].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'BW (%)' : tds[5].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'earnings' : tds[6].text.replace("$", "").replace(",",""),
             'ael' : tds[7].text,
-            }   
+                } 
                 #print(dict)
                 dictlist.append(dict)
             if(i==9):
@@ -55,14 +55,15 @@ def get_table(table):
             if(i==11):
                 dict = {
                 'sire' : sire,
+                'name' : tds[0].text,
                 'mares' : tds[1].text,
                 'foals' : tds[2].text,
-                'starters' : tds[3].text,
-                'winners' :  tds[4].text,
-                'BW (%)' : tds[5].text,
-                'earnings' : tds[6].text,
+                'starters' : tds[3].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'winners' :  tds[4].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'BW (%)' : tds[5].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'earnings' : tds[6].text.replace("$", "").replace(",",""),
                 'ael' : tds[7].text,
-                }   
+                } 
                 #print(dict)
                 dictlist.append(dict)
     return(dictlist)
@@ -83,73 +84,83 @@ def get_horses(racelist):
         #print(type(tds))
             if(len(tds)==8 or len(tds)==9):
                 #print(tds)
+                print(tds[2].text)
                 horsename = tds[2].text.strip(' \t\n\r').strip()[:-5].replace(" ", "%20")
                 #print(horsename)
                 print("itsthis")
                 horseurl = 'http://www.equineline.com/Free5XPedigreeSearchResults.cfm?horse_name=' + horsename + '&page_state=LIST_HITS&foaling_year=&dam_name=&include_sire_line=Y'
-                print(horseurl)
+                #print("trip", horseurl)
                 try:
                     horsereq = requests.get(horseurl,headers=headers)
                 except:
                     time.sleep(6)
                     horsereq = requests.get(horseurl,headers=headers)
                 soup = bs.BeautifulSoup(horsereq.text, 'lxml')
+                h4 = soup.find('h4')
+                if(str(h4)=='<h4><strong>No Matches Found</strong></h4>'):
+                    print("Horse doesn't exist in DB")
+                    inftab = 'n/a'
+                else:
                 #print(soup)
-                try:
-                    horsrl = soup.find('a').get('href')
-                except:
-                    print("Captcha error")
-                    time.sleep(6)
-                    time.sleep(6)
-                    horsereq = requests.get(horseurl,headers=headers)
-                    soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
-                try:
-                    horsrl = soup.find('a').get('href')
-                except:
-                    print("-- MENJAJ --")
-                    time.sleep(12)
-                    horsereq = requests.get(horseurl,headers=headers)
-                    soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
+                    try:
+                        horsrl = soup.find('a').get('href')
+                    except:
+                        print("Captcha error")
+                        time.sleep(6)
+                        time.sleep(6)
+                        horsereq = requests.get(horseurl,headers=headers)
+                        soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
                     try:
                         horsrl = soup.find('a').get('href')
                     except:
                         print("-- MENJAJ --")
                         time.sleep(12)
                         horsereq = requests.get(horseurl,headers=headers)
-                        soup = bs.BeautifulSoup(horsereq.text, 'lxml')
-                url = 'http://www.equineline.com/' + horsrl
-                start = url.find('reference_number=')
-                end = url.find('&registry')
-                refnum = url[start+17:end]
-                print(refnum)
-                link = 'http://www.equineline.com/Free5XPedigreeNickingDisplay.cfm?page_state=DISPLAY_REPORT&reference_number=' + refnum
-                #print(url)
-                #print(link)
-                try:
-                    maker = requests.get(link,headers=headers)
-                except:
-                    time.sleep(6)
-                    maker = requests.get(link,headers=headers)
-                supica = bs.BeautifulSoup(maker.text,'lxml')
-                #print(supica)
-                table = supica.find('table')
-                #print(table)
-                #print(type(table))
-                if(table is None):
-                    time.sleep(6)
-                    maker = requests.get(link,headers=headers)
+                        soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
+                        try:
+                            horsrl = soup.find('a').get('href')
+                        except:
+                            print("-- MENJAJ --")
+                            time.sleep(12)
+                            horsereq = requests.get(horseurl,headers=headers)
+                            soup = bs.BeautifulSoup(horsereq.text, 'lxml')
+                    horsrl = soup.find('a').get('href')     
+                    url = 'http://www.equineline.com/' + horsrl
+                    print("URL",  url)
+                    start = url.find('reference_number=')
+                    end = url.find('&registry')
+                    refnum = url[start+17:end]
+                    print(refnum)
+                    link = 'http://www.equineline.com/Free5XPedigreeNickingDisplay.cfm?page_state=DISPLAY_REPORT&reference_number=' + refnum
+                    print("LINK: ", link)
+                    #print(url)
+                    #print(link)
+                    try:
+                        maker = requests.get(link,headers=headers)
+                    except:
+                        time.sleep(6)
+                        maker = requests.get(link,headers=headers)
                     supica = bs.BeautifulSoup(maker.text,'lxml')
+                    #print(supica)
                     table = supica.find('table')
+                    #print(table)
+                    #print(type(table))
                     if(table is None):
                         time.sleep(6)
-                    maker = requests.get(link,headers=headers)
-                    supica = bs.BeautifulSoup(maker.text,'lxml')
+                        maker = requests.get(link,headers=headers)
+                        supica = bs.BeautifulSoup(maker.text,'lxml')
+                        table = supica.find('table')
+                        if(table is None):
+                            time.sleep(6)
+                            maker = requests.get(link,headers=headers)
+                            supica = bs.BeautifulSoup(maker.text,'lxml')
                     table = supica.find('table')
-                inftab = get_table(table)
+                    inftab = get_table(table)
                 horsedict = {
                         'P#' : tds[0].text.strip(' \t\n\r').replace(" ", ""),
                         'PP' : tds[1].text,
                         'Name' : tds[2].text.strip(' \t\n\r').strip()[:-5],
+                        'Claim' :  'No claim',
                         'Jockey': tds[4].text,
                         'Wgt' : tds[5].text,
                         'Trainer' : tds[6].text,

@@ -3,6 +3,7 @@ global date
 import bs4 as bs 
 from datetime import datetime
 import pytz
+import uuid
 import json,time,django
 from treciproj import settings
 import os
@@ -12,6 +13,17 @@ from RaceApp.models import Country
 global headers
 headers = {'user-agent': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)', 'origin': 'https://www.equibase.com',
                 'x-requested-with': 'XMLHttpRequest'}
+def get_proxy():
+    bumbum = 'http://api.proxyrotator.com/?apiKey=xPEjwuFkAhRrX2v43ZgVzcMWpQ9Gfs8H'
+
+    r = requests.get(bumbum)
+
+    jsonik = json.loads(r.text)
+    proxies = {
+        'http' : 'http://' + jsonik['proxy'],
+    }
+    print(jsonik['proxy'])
+    return proxies
 def get_table(table):
     #soup = bs.BeautifulSoup(table,'lxml')
     i=0
@@ -26,28 +38,28 @@ def get_table(table):
             'sire' : sire,
             'name' : tds[0].text,
             'foals' : tds[2].text,
-            'starters' : tds[3].text,
-            'winners' :  tds[4].text,
-            'BW (%)' : tds[5].text,
-            'earnings' : tds[6].text,
+            'starters' : tds[3].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'winners' :  tds[4].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'BW (%)' : tds[5].text.replace(" ", "").replace("(", ",").replace(")",""),
+            'earnings' : tds[6].text.replace("$", "").replace(",",""),
             'ael' : tds[7].text,
-            }
+                }
             # print(dict)
                 dictlist.append(dict)
             if(i==5):
                 sire = (tds[0].text)
             if(i==7):
                 dict = {
-            'sire' : sire,
-            'name' : tds[0].text,
-            'mares' : tds[1].text,
-            'foals' : tds[2].text,
-            'starters' : tds[3].text,
-            'winners' :  tds[4].text,
-            'BW (%)' : tds[5].text,
-            'earnings' : tds[6].text,
-            'ael' : tds[7].text,
-            }   
+                'sire' : sire,
+                'name' : tds[0].text,
+                'mares' : tds[1].text,
+                'foals' : tds[2].text,
+                'starters' : tds[3].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'winners' :  tds[4].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'BW (%)' : tds[5].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'earnings' : tds[6].text.replace("$", "").replace(",",""),
+                'ael' : tds[7].text,
+                }   
                 #print(dict)
                 dictlist.append(dict)
             if(i==9):
@@ -57,10 +69,10 @@ def get_table(table):
                 'sire' : sire,
                 'mares' : tds[1].text,
                 'foals' : tds[2].text,
-                'starters' : tds[3].text,
-                'winners' :  tds[4].text,
-                'BW (%)' : tds[5].text,
-                'earnings' : tds[6].text,
+                'starters' : tds[3].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'winners' :  tds[4].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'BW (%)' : tds[5].text.replace(" ", "").replace("(", ",").replace(")",""),
+                'earnings' : tds[6].text.replace("$", "").replace(",",""),
                 'ael' : tds[7].text,
                 }   
                 #print(dict)
@@ -68,6 +80,7 @@ def get_table(table):
     return(dictlist)
 def get_horses(racelist):
     for race in racelist:
+        ##proxies = get_proxy()
         horselist = []
         #http://www.equibase.com/static/entry/
         url = race['URL']
@@ -82,69 +95,100 @@ def get_horses(racelist):
         #print(type(tds))
             if(len(tds)==12 or len(tds)==11):
                 #print(tds)
-                horsename = tds[2].text.strip(' \t\n\r').strip()[:-5].replace(" ", "%20")
+                horsename = tds[2].text.strip(' \t\n\r').strip()[:-4].replace(" ", "%20")
                 #print(horsename)
                 print("itsthis")
                 horseurl = 'http://www.equineline.com/Free5XPedigreeSearchResults.cfm?horse_name=' + horsename + '&page_state=LIST_HITS&foaling_year=&dam_name=&include_sire_line=Y'
                 print(horseurl)
+                print('kauboj')
                 try:
-                    horsereq = requests.get(horseurl,headers=headers)
+                    ###proxies = get_proxy()
+                    horsereq = requests.get(horseurl,headers=headers,timeout=9)
                 except:
-                    time.sleep(6)
-                    horsereq = requests.get(horseurl,headers=headers)
-                soup = bs.BeautifulSoup(horsereq.text, 'lxml')
-                #print(soup)
-                try:
-                    horsrl = soup.find('a').get('href')
-                except:
-                    print("Captcha error")
-                    time.sleep(6)
-                    time.sleep(6)
-                    horsereq = requests.get(horseurl,headers=headers)
-                    soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
-                try:
-                    horsrl = soup.find('a').get('href')
-                except:
-                    print("-- MENJAJ --")
+                    print('error')
                     time.sleep(12)
-                    horsereq = requests.get(horseurl,headers=headers)
-                    soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
+                    horsereq = requests.get(horseurl,headers=headers,timeout=9)
+                    continue
+                else:
+                    print("mek")
+                    break              
+                soup = bs.BeautifulSoup(horsereq.text, 'lxml')
+                h4 = soup.find('h4')
+                print(h4)
+                if(str(h4)=='<h4><strong>No Matches Found</strong></h4>'):
+                    print("Horse doesn't exist in DB")
+                    inftab = 'n/a'
+                else:
+                #print(soup)
                     try:
                         horsrl = soup.find('a').get('href')
                     except:
-                        print("-- MENJAJ --")
+                        print("Captcha error")
                         time.sleep(12)
-                        horsereq = requests.get(horseurl,headers=headers)
-                        soup = bs.BeautifulSoup(horsereq.text, 'lxml')
-                url = 'http://www.equineline.com/' + horsrl
-                start = url.find('reference_number=')
-                end = url.find('&registry')
-                refnum = url[start+17:end]
-                print(refnum)
-                link = 'http://www.equineline.com/Free5XPedigreeNickingDisplay.cfm?page_state=DISPLAY_REPORT&reference_number=' + refnum
-                #print(url)
-                #print(link)
-                try:
-                    maker = requests.get(link,headers=headers)
-                except:
-                    time.sleep(6)
-                    maker = requests.get(link,headers=headers)
-                supica = bs.BeautifulSoup(maker.text,'lxml')
-                #print(supica)
-                table = supica.find('table')
-                #print(table)
-                #print(type(table))
-                if(table is None):
-                    time.sleep(6)
-                    maker = requests.get(link,headers=headers)
-                    supica = bs.BeautifulSoup(maker.text,'lxml')
-                    table = supica.find('table')
-                    if(table is None):
-                        time.sleep(6)
-                    maker = requests.get(link,headers=headers)
-                    supica = bs.BeautifulSoup(maker.text,'lxml')
-                    table = supica.find('table')
-                inftab = get_table(table)
+                        ###proxies = get_proxy()
+                        #time.sleep(6)
+                        while(1):
+                            try:
+                                ##proxies = get_proxy()
+                                horsereq = requests.get(horseurl,headers=headers,timeout=9)
+                                soup = bs.BeautifulSoup(horsereq.text, 'lxml')
+                                horsrl = soup.find('a').get('href')
+                            except:
+                                continue
+                            else:
+                                break
+                        #soup = bs.BeautifulSoup(horsereq.text, 'lxml') 
+                    #h#orsrl = soup.find('a').get('href')
+                    url = 'http://www.equineline.com/' + horsrl
+                    start = url.find('reference_number=')
+                    end = url.find('&registry')
+                    refnum = url[start+17:end]
+                    print(refnum)
+                    link = 'http://www.equineline.com/Free5XPedigreeNickingDisplay.cfm?page_state=DISPLAY_REPORT&reference_number=' + refnum
+                    #print(url)
+                    #print(link)
+                    while(1):
+                        try:
+                            ##proxies = get_proxy()
+                            maker = requests.get(link,headers=headers,timeout=9)
+                            supica = bs.BeautifulSoup(maker.text,'lxml')
+                            table = supica.find('table')
+                            if(table is None):
+                                ##proxies = get_proxy()
+                                maker = requests.get(link,headers=headers,timeout=9)
+                                supica = bs.BeautifulSoup(maker.text,'lxml')
+                                table = supica.find('table')
+                        except:
+                            continue
+                        else:
+                            break
+                    #print(supica)
+                   # table = supica.find('table')
+                    #print(table)
+                    #print(type(table))
+                    while(1):
+                        try:
+                            if(table is None):
+                                time.sleep(6)
+                                ##proxies = get_proxy()
+                                raise EnvironmentError
+                            else:
+                                break
+                        except:
+                            while(1):
+                                try:
+                                    maker = requests.get(link,headers=headers,timeout=9)
+                                except:
+                                    continue
+                                else:
+                                    break
+
+                            supica = bs.BeautifulSoup(maker.text,'lxml')
+                            table = supica.find('table')
+                        
+                            
+                    inftab = get_table(table)
+                ud = str(uuid.uuid4())
                 if(len(tds)==12): 
                     horsedict = {
                         'P#' : tds[0].text.strip(' \t\n\r').replace(" ", ""),
@@ -156,6 +200,7 @@ def get_horses(racelist):
                         'Trainer' : tds[9].text,
                         'M/L' : tds[10].text,
                         'Info' : inftab,
+                        'uuid' : ud,
                     }
                 else:
                     horsedict = {
@@ -168,6 +213,7 @@ def get_horses(racelist):
                         'Trainer' : tds[8].text,
                         'M/L' : tds[9].text,
                         'Info' : inftab,
+                        'uuid' : ud,
                     }
                 horselist.append(horsedict)
         race['Horses'] = horselist
@@ -253,7 +299,10 @@ def get_races(eventlist):
     print("DATE:", date) #datum
     o = Country('1','America',jsonero,date) #datum
     o.save()
-    
+    f = open('americano.json','w')
+    f.write(jsonero)
+    f.close()
+    #horsrl = soup.find('a').get('href')
     noder = requests.post('replaceme.com', json=jsonero)
     #jsonero = json.dumps(eventlist)
     #print(jsonero)
