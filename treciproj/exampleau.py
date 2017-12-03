@@ -113,13 +113,14 @@ def get_horses(racelist):
                 #time.sleep(3)
                         while(1):
                             try:
-                                print("Captcha error")
                                 
-                                time.sleep(3)
+                                #time.sleep(3)
                                 horsereq = requests.get(horseurl,headers=headers)
                                 soup = bs.BeautifulSoup(horsereq.text, 'lxml')
                                 horsrl = soup.find('a').get('href') 
                             except:
+                                print("Captcha error")
+                                time.sleep(3)
                                 continue 
                             else:
                                 break
@@ -143,7 +144,16 @@ def get_horses(racelist):
                         else:
                             supica = bs.BeautifulSoup(maker.text,'lxml')
                         #print(supica)
-                            table = supica.find('table')
+                            try:
+                                a = supica.find('a').get('href')
+                            except:
+                                a=''
+                            if(a=='mailto:help@equineline.com'):
+                                print("NO horse")
+                                table='Notable'
+                            else:
+                                print("stvorena")
+                                table = supica.find('table')
                             break
                     #print(table)
                     #print(type(table))
@@ -152,14 +162,18 @@ def get_horses(racelist):
                             time.sleep(3)
                             try:
                                 maker = requests.get(link,headers=headers)
-                            else:
+                            except:
                                 time.sleep(10)
                                 maker = requests.get(link,headers=headers)
                             supica = bs.BeautifulSoup(maker.text,'lxml')
                             table = supica.find('table')
                         else:
                             break
-                    inftab = get_table(table)
+                    if(table=='Notable'):
+                        inftab = 'n/a'
+                    else:
+                        inftab = get_table(table)
+                    #inftab = get_table(table)
                     print(inftab)
                     ud = str(uuid.uuid4())
                 horsedict = {
@@ -259,7 +273,7 @@ def get_races(eventlist):
     o = Country('2','Australia',jsonero,date) #datum
     o.save()
     
-    noder = requests.post('replaceme.com', json=jsonero)
+    noder = requests.put('https://konji-187909.appspot.com/api/regions/australia', json=jsonero)
     #jsonero = json.dumps(eventlist)
     #print(jsonero)
     #f = open('racehelpme.json', 'w')

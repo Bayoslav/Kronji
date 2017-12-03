@@ -111,13 +111,17 @@ def get_horses(racelist):
                         time.sleep(3)
                         while(1):
                             try:
-                                print("Captcha error")
                                 
-                                time.sleep(3)
+                                #print(horseurl)
+                                time.sleep(12)
                                 horsereq = requests.get(horseurl,headers=headers)
+                                #print(horsereq.text)
                                 soup = bs.BeautifulSoup(horsereq.text, 'lxml')
-                                horsrl = soup.find('a').get('href') 
+                                horsrl = soup.find('a').get('href')
+                                #print(horsrl)
                             except:
+                                print("Captcha error")
+                                print('1')
                                 continue 
                             else:
                                 break
@@ -139,8 +143,16 @@ def get_horses(racelist):
                             continue
                         else:
                             supica = bs.BeautifulSoup(maker.text,'lxml')
-                        #print(supica)
-                            table = supica.find('table')
+                            try:
+                                a = supica.find('a').get('href')
+                            except:
+                                a=''
+                            if(a=='mailto:help@equineline.com'):
+                                print("NO horse")
+                                table='Notable'
+                            else:
+                                print("stvorena")
+                                table = supica.find('table')
                             break
                     #print(table)
                     #print(type(table))
@@ -149,15 +161,18 @@ def get_horses(racelist):
                             time.sleep(3)
                             try:
                                 maker = requests.get(link,headers=headers)
-                            else:
+                            except:
                                 time.sleep(10)
                                 maker = requests.get(link,headers=headers)
                             supica = bs.BeautifulSoup(maker.text,'lxml')
                             table = supica.find('table')
                         else:
                             break
-                    inftab = get_table(table)
-                    print(inftab)
+                    if(table=='Notable'):
+                        inftab = 'n/a'
+                    else:
+                        inftab = get_table(table)
+                    #print(inftab)
                 ud = str(uuid.uuid4())
                 horsedict = {
                         'P#' : tds[0].text.strip(' \t\n\r').replace(" ", ""),
@@ -255,11 +270,12 @@ def get_races(eventlist):
     print("DATE:", date) #datum
     o = Country('3','England',jsonero,date) #datum
     o.save()
+    r = requests.put('https://konji-187909.appspot.com/api/regions/uk', json=jsonero)
     f = open('inbreds.json','w')
     f.write(jsonero)
     f.close()
     
-    noder = requests.post('replaceme.com', json=jsonero)
+    #noder = requests.post('replaceme.com', json=jsonero)
     #jsonero = json.dumps(eventlist)
     #print(jsonero)
     #f = open('racehelpme.json', 'w')
@@ -270,12 +286,12 @@ def get_races(eventlist):
     
 #get_events()
 
-'''while(1):
+while(1):
     #r = requests.get('https://www.equibase.com/static/entry/index.html')
     #soup = bs.BeautifulSoup(r.text,'lxml')
     aa = Country.objects.get(id=3)
     dated = aa.date
-    print("Inbreds")
+    print("England")
     try:
         r = requests.get('http://www.equibase.com/static/foreign/entry/index.html?SAP=TN#Australia')
     except:
@@ -316,6 +332,6 @@ def get_races(eventlist):
         continue 
     else:
         print("New race! Scraping.")
-        get_events()'''
+        get_events()
 
-get_events()
+#get_events()

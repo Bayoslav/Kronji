@@ -158,9 +158,19 @@ def get_horses(racelist):
                             table = supica.find('table')
                             if(table is None):
                                 ##proxies = get_proxy()
-                                maker = requests.get(link,headers=headers,timeout=9)
-                                supica = bs.BeautifulSoup(maker.text,'lxml')
-                                table = supica.find('table')
+                                #soup = bs.BeautifulSoup(r.text,'lxml')
+                                try:
+                                    a = supica.find('a').get('href')
+                                except:
+                                    a=''
+                                if(a=='mailto:help@equineline.com'):
+                                    print("NO horse")
+                                    table='Notable'
+                                else:
+                                    print("stvorena")
+                                    maker = requests.get(link,headers=headers,timeout=9)
+                                    supica = bs.BeautifulSoup(maker.text,'lxml')
+                                    table = supica.find('table')
                         except:
                             continue
                         else:
@@ -190,8 +200,10 @@ def get_horses(racelist):
                             supica = bs.BeautifulSoup(maker.text,'lxml')
                             table = supica.find('table')
                         
-                            
-                    inftab = get_table(table)
+                    if(table=='Notable'):
+                        inftab = 'n/a'
+                    else:
+                        inftab = get_table(table)
                 ud = str(uuid.uuid4())
                 if(len(tds)==12): 
                     horsedict = {
@@ -308,7 +320,7 @@ def get_races(eventlist):
     f.write(jsonero)
     f.close()
     #horsrl = soup.find('a').get('href')
-    noder = requests.post('replaceme.com', json=jsonero)
+    noder = requests.put('https://konji-187909.appspot.com/api/regions/america', json=jsonero)
     #jsonero = json.dumps(eventlist)
     #print(jsonero)
     #f = open('racehelpme.json', 'w')
