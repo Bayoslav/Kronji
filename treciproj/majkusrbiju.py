@@ -70,7 +70,7 @@ def get_table(table):
 def get_events(datic):
     global fontic
     formData = {
-        'raceYmd' : 'datic',
+        'raceYmd' : datic,
         'command' : 'displayRaceList'
     }
     kk = requests.post('http://210.145.16.108/jair/SelectRace.do',headers=headers,data=formData)
@@ -285,39 +285,7 @@ def get_races(events):
                                 table = supica.find('table')
                             
                         if(table=='Notable'):
-                            inftab = [
-                            {
-                                "sire": "",
-                                "name": "",
-                                "foals": "",
-                                "starters": "",
-                                "winners": "",
-                                "BW (%)": "",
-                                "earnings": "",
-                                "ael": ""
-                            },
-                            {
-                                "sire": "",
-                                "name": "",
-                                "mares": "",
-                                "foals": "",
-                                "starters": "",
-                                "winners": "",
-                                "BW (%)": "",
-                                "earnings": "",
-                                "ael": ""
-                            },
-                            {
-                                "sire": "",
-                                "mares": "",
-                                "foals": "",
-                                "starters": "",
-                                "winners": "",
-                                "BW (%)": "",
-                                "earnings": "",
-                                "ael": ""
-                            }
-                        ]
+                            inftab = 'n/a'
                         else:
                             inftab = get_table(table)
                     ud = str(uuid.uuid4())

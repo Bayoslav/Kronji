@@ -1,0 +1,33 @@
+"Info": [
+                            {
+                                "sire": "SIRE of : Act One (GB)",
+                                "name": "Act One (GB)",
+                                "foals"*: "299",
+                                "starters"*: "210,70", start1A = 210, start1B = 70
+                                "winners"*: "118,39", win1A = 118  win1B = 39
+                                "BW (%)"*: "8,3", bw1A = 8  bw1B = 3
+                                "earnings"*: "6038345",
+                                "ael"*: "0.92"
+                            },
+                            {
+                                "sire": "BROODMARE SIRE of : Strong Gale (IRE)",
+                                "name": "Strong Gale (IRE)",
+                                "mares"*: "542", mare2 ili mare1 kako hoces
+                                "foals"*: "3402",
+                                "starters"*: "1694,50", start2A = 1694, start2B = 50
+                                "winners"*: "683,20", win2A = 683  win2B = 20
+                                "BW (%)"*: "0,0",
+                                "earnings"*: "38134779",
+                                "ael"*: "0.39"
+                            },
+                            {
+                                "sire": "Nicking Stats for mares by Strong Gale (IRE) when bred to Act One (GB)",
+                                "mares"*: "1", mare3
+                                "foals"*: "1",
+                                "starters"*: "1,100",
+                                "winners"*: "1,100",
+                                "BW (%)"*: "0,0",
+                                "earnings"*: "9558",
+                                "ael"*: "0.00"
+                            }
+                        ],

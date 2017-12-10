@@ -103,7 +103,39 @@ def get_horses(racelist):
                 h4 = soup.find('h4')
                 if(str(h4)=='<h4><strong>No Matches Found</strong></h4>'):
                     print("Horse doesn't exist in DB")
-                    inftab = 'n/a'
+                    inftab = [
+                            {
+                                "sire": "",
+                                "name": "",
+                                "foals": "",
+                                "starters": "",
+                                "winners": "",
+                                "BW (%)": "",
+                                "earnings": "",
+                                "ael": ""
+                            },
+                            {
+                                "sire": "",
+                                "name": "",
+                                "mares": "",
+                                "foals": "",
+                                "starters": "",
+                                "winners": "",
+                                "BW (%)": "",
+                                "earnings": "",
+                                "ael": ""
+                            },
+                            {
+                                "sire": "",
+                                "mares": "",
+                                "foals": "",
+                                "starters": "",
+                                "winners": "",
+                                "BW (%)": "",
+                                "earnings": "",
+                                "ael": ""
+                            }
+                        ]
                 else:
                     try:
                         horsrl = soup.find('a').get('href')
@@ -170,7 +202,39 @@ def get_horses(racelist):
                         else:
                             break
                     if(table=='Notable'):
-                        inftab = 'n/a'
+                        inftab = [
+                            {
+                                "sire": "",
+                                "name": "",
+                                "foals": "",
+                                "starters": "",
+                                "winners": "",
+                                "BW (%)": "",
+                                "earnings": "",
+                                "ael": ""
+                            },
+                            {
+                                "sire": "",
+                                "name": "",
+                                "mares": "",
+                                "foals": "",
+                                "starters": "",
+                                "winners": "",
+                                "BW (%)": "",
+                                "earnings": "",
+                                "ael": ""
+                            },
+                            {
+                                "sire": "",
+                                "mares": "",
+                                "foals": "",
+                                "starters": "",
+                                "winners": "",
+                                "BW (%)": "",
+                                "earnings": "",
+                                "ael": ""
+                            }
+                        ]
                     else:
                         inftab = get_table(table)
                     #inftab = get_table(table)
